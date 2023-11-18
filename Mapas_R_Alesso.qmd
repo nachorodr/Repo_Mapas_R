@@ -34,7 +34,81 @@ library(MLmetrics)
 ```{r}
 pacman::p_install_gh("AgRoMeteorologiaINTA/agromet")
 pacman::p_load(
-    tidyverse, gridExtra, patch
+    tidyverse, gridExtra, patchwork,
+    sp, sf,
+    ggspatial, tmap, leaflet, mapview,
+    agromet
 )
+```
+Preparando unos datos para probar...
+
+```{r}
+data("meuse")
+
+coordinates(meuse) <- ~x+y
+
+proj4string(meuse) <- CRS("+init=epsg:28992")
+
+# Datos raster
+
+data("meuse.grid")
+
+coordinates(meuse.grid) = ~x+y
+proj4string(meuse.grid) <- CRS("+init=epsg:28992")
+gridded(meuse.grid) = TRUE
+```
+
+Algo basico con sp: :plot()...
+```{r}
+labs <- cut(meuse$zinc, 5) |> unique() # "|>" creo q es el signo PIPPE
+cols <- palette.colors(nlevels(labs)) #crea una paleta de colores
+
+plot(meuse, axes = T, col = cols, pch = 1) # axes= T, sino no pone nombre de ejes.
+
+legend("topleft", legend = labs, pch=1, col = cols)# es la leyenda q aparce en el cuadrito. Pero no se q es.
+```
+
+# Lo mismo con spplot()
+```{r}
+spplot(meuse, zcol= "zinc", scales= list (draw = T))
+```
+
+## SP ALGO mejor
+```{r}
+spplot(meuse, zcol= "zinc",
+       scales= list (draw = T),
+       cuts =seq (0,2000, by= 250),# aca hace escala especifica
+       key.space = "right",# lo pone a la derecha
+       ylab = "Northing (m)",
+       xlab = "Easting (m)") 
+```
+
+## Más de una variable
+
+```{r}
+spplot(meuse, zcol= c("zinc","lead"), #acá le pone las 2 variables
+       scales= list (draw = T),
+       ylab = "Northing (m)",
+       xlab = "Easting (m)",
+       key.space = "botton") 
+```
+
+## Ploteando Rasters
+```{r}
+p1<- spplot(meuse.grid, zcol= "dist", #lo unico que cambio "meuse grid"
+            scales= list (draw = T),# el map muestra algo como dist del Rio a la costa
+       ylab = "Northing (m)",
+       xlab = "Easting (m)",
+       at = seq (0, 1, by = 0.05)
+)
+ 
+p1           
+```
+
+## AHORA FUNCIÓN "sf", MÁS MODERNA
+```{r}
+meuse_sf <- st_as_sf(meuse)
+
+plot(meuse_sf)
 ```
 
