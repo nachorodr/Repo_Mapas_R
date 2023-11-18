@@ -112,3 +112,33 @@ meuse_sf <- st_as_sf(meuse)
 plot(meuse_sf)
 ```
 
+## ggplot2 + sf + ggspatial
+
+```{r}
+ggplot(meuse_sf)+
+    aes(color = zinc)+
+    geom_sf()+
+    coord_sf(datum= NULL)
+```
+
+## agrego un mapa gratuito de fondo
+
+```{r}
+ggplot(meuse_sf)+
+    annotation_map_tile("osm", zoomin= 0)+
+    aes(color = zinc)+
+    geom_sf()+
+    coord_sf()
+```
+
+## Le agrego Facet
+```{r}
+meuse_sf %>% 
+    pivot_longer(cadmium:zinc) %>% 
+    ggplot()+
+    annotation_map_tile("osm", zoomin= 0)+
+    aes(color = value)+
+    geom_sf()+
+    facet_wrap(~name)# aca!
+```
+
