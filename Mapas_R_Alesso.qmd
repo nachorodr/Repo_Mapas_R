@@ -1,0 +1,40 @@
+---
+title: "Mapas_R_Alesso"
+author: "Rodriguez, I"
+execute:
+  echo: false
+editor: visual
+output: true
+warning: false
+editor_options: 
+  chunk_output_type: inline
+format:
+  html:
+    code-fold: false
+    code-tools: false
+---
+
+```{r}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+## Load packages
+
+```{r}
+library(rpart)
+library(rpart.plot)
+library(rsample)
+library(usethis)
+library(devtools)
+library(tidyverse)
+library(dplyr)
+library(MLmetrics)
+```
+
+```{r}
+pacman::p_install_gh("AgRoMeteorologiaINTA/agromet")
+pacman::p_load(
+    tidyverse, gridExtra, patch
+)
+```
+
