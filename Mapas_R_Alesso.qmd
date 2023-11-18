@@ -142,3 +142,87 @@ meuse_sf %>%
     facet_wrap(~name)# aca!
 ```
 
+# TMAP
+```{r}
+tmap_mode("plot")
+
+# Poligonos usando Agromet
+provs<- mapa_provincias()
+dptos<- mapa_departamentos()
+
+mapa_base<- tm_shape(provs)+
+    tm_borders()# clave para q no ponga rellenos a "provincias"
+
+mapa_base
+```
+
+# Agregando los estaciones con tm_dots ()
+```{r}
+estaciones <- metadatos_nh() |>
+st_as_sf(coords = c("lon", "lat")) |>
+st_set_crs(4326)
+colores <- c(INTA= "blue", SMN = "red")
+
+mapa_est_org<- tm_shape(estaciones) +
+tm_dots("organismo", palette = colores) +
+tm_layout(legend.outside = T)
+
+
+mapa_base + mapa_est_org
+```
+
+# Tamaño de los puntos en fción de la altura de Est. Met
+```{r}
+mapa_est_alt <- tm_shape(estaciones)+
+    tm_bubbles("altura")+
+    tm_layout(legend.outside = T)
+
+mapa_base+mapa_est_alt
+```
+
+# TMAP with Facet
+```{r}
+provincias <- c("Buenos Aires”, “Santa Fe", "Cordoba") 
+
+# provs |> filter(name %in% provincias) |> 
+# tm_shape() +
+# tm_borders() +
+# tm_facets("name")+
+# estaciones |> filter(provincia %in% provincias) |>
+# tm_shape() +
+# tm_dots("organisno", size = 8.25, palette = colores) +
+# tm_facets("provincia", ncol = 1)
+
+provs |> dplyr::filter(name %in% provincias) |> 
+  tm_shape() +
+  tm_borders() +
+  tm_facets("name") +
+  estaciones |> dplyr::filter(provincias %in% provincia) |>
+  tm_shape() +
+  tm_dots("organisno", size = 8.25, palette = colores) +
+  tm_facets("provincia", ncol = 1)
+```
+
+## Agregar elementos adicionales
+
+```{r}
+mapa_base +
+    mapa_est_org +
+    tm_graticules() +
+    tm_compass(#le agrega el Norte
+        type = "arrow", size = 2,
+        position = c("left","top")
+    )+
+    tm_scale_bar()+# para escale, metros en escala REAL
+    tm_layout(
+        main.title = "Estnaciones NH",
+        main.title.size = 1
+    )
+```
+
+## Hacer una mapa y que sale un mapita de adentro
+
+```{r}
+
+```
+
