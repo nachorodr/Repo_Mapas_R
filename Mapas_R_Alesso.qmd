@@ -184,23 +184,15 @@ mapa_base+mapa_est_alt
 ```{r}
 provincias <- c("Buenos Aires”, “Santa Fe", "Cordoba") 
 
-# provs |> filter(name %in% provincias) |> 
-# tm_shape() +
-# tm_borders() +
-# tm_facets("name")+
-# estaciones |> filter(provincia %in% provincias) |>
-# tm_shape() +
-# tm_dots("organisno", size = 8.25, palette = colores) +
-# tm_facets("provincia", ncol = 1)
+provs |> filter(name %in% provincias) |>
+tm_shape() +
+tm_borders() +
+tm_facets("name")+
+estaciones |> filter(estaciones,provincia %in% provincias) |>
+tm_shape() +
+tm_dots("organisno", size = 8.25, palette = colores) +
+tm_facets("provincia", ncol = 1)
 
-provs |> dplyr::filter(name %in% provincias) |> 
-  tm_shape() +
-  tm_borders() +
-  tm_facets("name") +
-  estaciones |> dplyr::filter(provincias %in% provincia) |>
-  tm_shape() +
-  tm_dots("organisno", size = 8.25, palette = colores) +
-  tm_facets("provincia", ncol = 1)
 ```
 
 ## Agregar elementos adicionales
@@ -223,6 +215,25 @@ mapa_base +
 ## Hacer una mapa y que sale un mapita de adentro
 
 ```{r}
+# Mapa principal
+mapa_bsas <- provs |> dplyr::filter(name == "Buenos Aires") |>
+  tm_shape() +
+  tm_borders() +
+  estaciones |> filter(provincia == "Buenos Aires") |>
+  tm_shape() +
+  tm_dots("organismo", size = 0.85, palette = colores) +
+  tm_text("estacion", size = 0.75, ymod = 0.5, remove.overlap = TRUE) +
+  tm_layout(frame = FALSE)
 
+#Minimapa
+provs <- provs %>% mutate(foco = ifelse(name == "Buenos Aires","gray","white")) # con este codigo la prov de Bs As aparece en gris. if is "Bs As"= GREY. if not = "White"
+mapa_arg <- tm_shape(provs) +
+    tm_polygons("foco")
+
+
+# Imprimir mapa principal y submapa
+mapa_bsas
+vp <- grid::viewport(x= 0.9, y= 0.2, width= 0.3, height= 0.3)
+print(mapa_arg, vp=vp)
 ```
-
+###------ FIN --------- # LUEGO SIGUEN MAPAS DINÁMICOS################################
